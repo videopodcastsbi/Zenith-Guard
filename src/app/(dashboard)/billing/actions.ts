@@ -75,7 +75,7 @@ export async function verifySession(sessionId: string) {
   if (!stripeKey) return { error: 'No Stripe key' }
   
   try {
-    const stripe = new Stripe(stripeKey, { apiVersion: '2025-01-27.acacia' })
+    const stripe = new Stripe(stripeKey, { apiVersion: '2026-06-24.dahlia' })
     const session = await stripe.checkout.sessions.retrieve(sessionId)
     
     if (session.payment_status === 'paid') {
