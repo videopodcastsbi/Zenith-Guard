@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Bell, Menu, User, Settings, LogOut, CreditCard } from "lucide-react";
+import Link from "next/link";
+import { 
+  Search, Bell, Menu, User, Settings, LogOut, CreditCard,
+  Shield, LayoutDashboard, Gamepad2, Users, Activity, BellRing, ShieldAlert, Baby, Key, Lock
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,11 +22,40 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
 
+const NAV_ITEMS = [
+  {
+    section: "MAIN",
+    items: [
+      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { name: "Games", href: "/games", icon: Gamepad2 },
+      { name: "Players", href: "/players", icon: Users },
+      { name: "Analytics", href: "/analytics", icon: Activity },
+    ],
+  },
+  {
+    section: "SECURITY",
+    items: [
+      { name: "Alerts", href: "/alerts", icon: BellRing },
+      { name: "Moderation", href: "/moderation", icon: ShieldAlert },
+      { name: "Child Safety", href: "/child-safety", icon: Baby },
+    ],
+  },
+  {
+    section: "DEVELOPER",
+    items: [
+      { name: "API Keys", href: "/api-keys", icon: Key },
+      { name: "Settings", href: "/settings", icon: Settings },
+      { name: "Billing", href: "/billing", icon: Lock },
+    ],
+  }
+];
+
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Handle Cmd+K
   useEffect(() => {
@@ -50,17 +83,45 @@ export function Header() {
   return (
     <header className="h-20 border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-md flex items-center justify-between px-4 md:px-6 sticky top-0 z-10">
       <div className="flex items-center gap-4">
-        <Sheet>
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden text-slate-400 hover:text-white" />}>
               <Menu size={20} />
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-72 bg-[#111118] border-r-white/10">
+          <SheetContent side="left" className="p-0 w-72 bg-[#111118] border-r-white/10 overflow-y-auto">
             <div className="h-full w-full block md:hidden">
-               <div className="p-6 text-xl font-bold text-white flex items-center gap-2">
-                 <div className="w-8 h-8 rounded-md bg-blue-500 flex items-center justify-center">Z</div>
+               <div className="p-6 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 flex items-center gap-2">
+                 <Shield className="w-8 h-8 text-blue-500 shrink-0" />
                  Zenith-Guard
                </div>
-               <div className="px-4 text-slate-400">Mobile Navigation items...</div>
+               <div className="px-3 pb-6">
+                 {NAV_ITEMS.map((section, idx) => (
+                   <div key={idx} className="mb-6">
+                     <div className="px-3 mb-2 text-xs font-semibold text-slate-500 tracking-wider">
+                       {section.section}
+                     </div>
+                     <div className="space-y-1">
+                       {section.items.map((item) => {
+                         const isActive = pathname === item.href;
+                         return (
+                           <Link
+                             key={item.href}
+                             href={item.href}
+                             onClick={() => setMobileMenuOpen(false)}
+                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                               isActive
+                                 ? "bg-blue-500/10 text-blue-400"
+                                 : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                             }`}
+                           >
+                             <item.icon size={20} className={isActive ? "text-blue-400" : "text-slate-400"} />
+                             <span>{item.name}</span>
+                           </Link>
+                         );
+                       })}
+                     </div>
+                   </div>
+                 ))}
+               </div>
             </div>
           </SheetContent>
         </Sheet>
