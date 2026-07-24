@@ -119,7 +119,7 @@ export default function LoginPage() {
         <Button 
           variant="outline" 
           type="button" 
-          onClick={() => startTransition(() => signInWithProvider('discord'))}
+          onClick={() => startTransition(async () => { await signInWithProvider('discord'); })}
           className="bg-[#1a1a24] border-white/10 text-white hover:bg-[#5865F2]/20 hover:text-[#5865F2] hover:border-[#5865F2]/50 transition-colors" 
           disabled={isPending}
         >
