@@ -63,11 +63,11 @@ export default function ApiKeysPage() {
           <p className="text-gray-400 mt-2">Manage access keys for connecting your Roblox servers to Zenith-Guard.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
+          <DialogTrigger render={
             <Button className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 border-0">
               <Plus className="mr-2 h-4 w-4" /> Generate New Key
             </Button>
-          </DialogTrigger>
+          } />
           <DialogContent className="bg-[#111118] border-gray-800 text-white">
             <DialogHeader>
               <DialogTitle>Create New API Key</DialogTitle>

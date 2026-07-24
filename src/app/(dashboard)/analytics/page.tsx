@@ -74,7 +74,7 @@ export default function AnalyticsPage() {
           </h1>
           <p className="text-gray-400 mt-2">Comprehensive overview of your game network security.</p>
         </div>
-        <Select defaultValue={range} onValueChange={setRange}>
+        <Select defaultValue={range} onValueChange={(value) => value && setRange(value)}>
           <SelectTrigger className="w-[180px] bg-[#1a1a24] border-gray-800 text-white">
             <SelectValue placeholder="Select range" />
           </SelectTrigger>
