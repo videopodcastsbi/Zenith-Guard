@@ -1,0 +1,92 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/lib/supabase/server'
+
+export async function getGames() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
+
+  const { data, error } = await supabase
+    .from('games')
+    .select('*')
+    .eq('owner_id', user.id)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  const enrichedGames = await Promise.all(data.map(async (game) => {
+    let live_players = 0;
+    let visits = 0;
+    let playing = 0;
+    
+    try {
+      // 1. Get Universe ID
+      const uniRes = await fetch(`https://apis.roblox.com/universes/v1/places/${game.place_id}/universe`, { next: { revalidate: 30 } });
+      if (uniRes.ok) {
+        const uniData = await uniRes.json();
+        const universeId = uniData.universeId;
+        
+        if (universeId) {
+          // 2. Get Game Stats
+          const statsRes = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`, { next: { revalidate: 30 } });
+          if (statsRes.ok) {
+            const statsData = await statsRes.json();
+            if (statsData.data && statsData.data.length > 0) {
+              live_players = statsData.data[0].playing || 0;
+              visits = statsData.data[0].visits || 0;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch Roblox stats for place:", game.place_id);
+    }
+    
+    return {
+      ...game,
+      live_players,
+      servers: Math.ceil(live_players / 40) // Estimate server count
+    };
+  }));
+
+  return { games: enrichedGames }
+}
+
+export async function addGame(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
+
+  const name = formData.get('name') as string
+  const place_id = formData.get('place_id') as string
+
+  if (!name || !place_id) {
+    return { error: 'Name and Place ID are required' }
+  }
+
+  const { error } = await supabase
+    .from('games')
+    .insert({
+      owner_id: user.id,
+      name,
+      place_id,
+      status: 'Healthy'
+    })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/games')
+  return { success: true }
+}
