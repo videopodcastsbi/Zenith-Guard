@@ -80,6 +80,14 @@ export async function addGame(formData: FormData) {
     return { error: 'Name and Place ID are required' }
   }
 
+  // Ensure user exists in public.users to prevent foreign key constraint errors
+  // This is a fallback in case the Supabase trigger failed
+  await supabase.from('users').upsert({
+    id: user.id,
+    email: user.email || 'unknown@example.com',
+    name: user.user_metadata?.full_name || user.user_metadata?.name || 'User'
+  }, { onConflict: 'id' })
+
   const { error } = await supabase
     .from('games')
     .insert({
