@@ -7,9 +7,65 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { useState, useEffect, useTransition } from "react";
+import { Loader2, Check } from "lucide-react";
+import { getGamesWithWebhooks, saveDiscordWebhook } from "./actions";
 
 export default function SettingsPage() {
+  const [games, setGames] = useState<any[]>([]);
+  const [loadingGames, setLoadingGames] = useState(true);
+  const [selectedGameId, setSelectedGameId] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookEnabled, setWebhookEnabled] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  const fetchGames = async () => {
+    setLoadingGames(true);
+    const res = await getGamesWithWebhooks();
+    if (res.games) {
+      setGames(res.games);
+      if (res.games.length > 0) {
+        selectGame(res.games[0].id, res.games);
+      }
+    }
+    setLoadingGames(false);
+  };
+
+  const selectGame = (gameId: string, gamesList = games) => {
+    setSelectedGameId(gameId);
+    const game = gamesList.find(g => g.id === gameId);
+    if (game) {
+      setWebhookUrl(game.discord_webhook || "");
+      setWebhookEnabled(!!game.discord_webhook);
+    }
+    setSaveSuccess(false);
+  };
+
+  const handleSaveWebhook = () => {
+    if (!selectedGameId) return;
+    
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append('game_id', selectedGameId);
+      formData.append('webhook_url', webhookUrl);
+      formData.append('enabled', String(webhookEnabled));
+      
+      const res = await saveDiscordWebhook(formData);
+      if (res.success) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+        // Refresh games list in background
+        const gRes = await getGamesWithWebhooks();
+        if (gRes.games) setGames(gRes.games);
+      }
+    });
+  };
+
   return (
     <div className="p-8 space-y-8 max-w-4xl mx-auto">
       <div>
@@ -59,7 +115,7 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Bell className="mr-2 h-5 w-5 text-yellow-400" />
-                Notifications
+                Notifications & Webhooks
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -70,16 +126,58 @@ export default function SettingsPage() {
                 </div>
                 <Switch defaultChecked />
               </div>
+              
               <Separator className="bg-gray-800" />
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <h4 className="text-sm font-medium text-gray-200 flex items-center"><Webhook className="mr-2 h-4 w-4" /> Discord Webhook</h4>
-                  <p className="text-sm text-gray-500">Send alerts to a Discord channel.</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <h4 className="text-sm font-medium text-gray-200 flex items-center"><Webhook className="mr-2 h-4 w-4" /> Discord Webhook (Pro Only)</h4>
+                    <p className="text-sm text-gray-500">Send alerts to a Discord channel per game.</p>
+                  </div>
+                  <Switch checked={webhookEnabled} onCheckedChange={setWebhookEnabled} disabled={loadingGames || games.length === 0} />
                 </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="space-y-2 pt-2">
-                <Input placeholder="https://discord.com/api/webhooks/..." className="bg-[#1a1a24] border-gray-800 text-sm" defaultValue="https://discord.com/api/webhooks/123/abc" />
+                
+                {loadingGames ? (
+                  <div className="flex justify-center p-4"><Loader2 className="h-5 w-5 animate-spin text-gray-500" /></div>
+                ) : games.length === 0 ? (
+                  <p className="text-sm text-red-400">You must add a game first before configuring webhooks.</p>
+                ) : (
+                  <div className="space-y-4 bg-black/20 p-4 rounded-md border border-gray-800/50">
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Select Game</label>
+                      <select 
+                        value={selectedGameId} 
+                        onChange={(e) => selectGame(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-gray-800 bg-[#1a1a24] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+                      >
+                        {games.map(g => (
+                          <option key={g.id} value={g.id}>{g.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Webhook URL</label>
+                      <Input 
+                        placeholder="https://discord.com/api/webhooks/..." 
+                        className="bg-[#1a1a24] border-gray-800 text-sm" 
+                        value={webhookUrl}
+                        onChange={(e) => setWebhookUrl(e.target.value)}
+                        disabled={!webhookEnabled}
+                      />
+                    </div>
+                    
+                    <Button 
+                      onClick={handleSaveWebhook} 
+                      disabled={isPending || (!webhookEnabled && !webhookUrl)} 
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : saveSuccess ? <Check className="mr-2 h-4 w-4" /> : null}
+                      {saveSuccess ? "Saved!" : "Save Webhook Settings"}
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
