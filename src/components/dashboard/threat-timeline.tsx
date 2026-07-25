@@ -50,18 +50,18 @@ export function ThreatTimeline() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#111118]/95 backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-xl">
-          <p className="text-slate-400 text-xs mb-2">{label}</p>
+        <div className="bg-popover/95 backdrop-blur-xl border border-border p-4 rounded-xl shadow-xl">
+          <p className="text-muted-foreground text-xs mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-2 mt-1">
               <div 
                 className="w-2 h-2 rounded-full" 
                 style={{ backgroundColor: entry.color }} 
               />
-              <span className="text-sm font-medium text-slate-200">
+              <span className="text-sm font-medium text-popover-foreground">
                 {entry.name}:
               </span>
-              <span className="text-sm font-bold text-white ml-auto">
+              <span className="text-sm font-bold text-popover-foreground ml-auto">
                 {entry.value}
               </span>
             </div>

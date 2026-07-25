@@ -94,26 +94,26 @@ export function StatsCards({ gamesCount = 0 }: { gamesCount?: number }) {
         <motion.div
           key={i}
           variants={item}
-          className="bg-[#1a1a24]/80 backdrop-blur-md border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-white/10 transition-colors"
+          className="bg-card/80 backdrop-blur-md border border-border rounded-xl p-5 relative overflow-hidden group hover:border-primary/20 transition-colors"
         >
           {/* Subtle background glow */}
           <div className={`absolute -right-10 -top-10 w-32 h-32 bg-gradient-to-br ${stat.color} rounded-full blur-[64px] opacity-10 group-hover:opacity-20 transition-opacity`} />
           
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2.5 rounded-lg bg-black/20 border border-white/5">
+            <div className="p-2.5 rounded-lg bg-background/50 border border-border">
               <stat.icon className={`w-5 h-5 text-transparent bg-clip-text bg-gradient-to-br ${stat.color} fill-current`} />
             </div>
-            <div className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-black/20 ${stat.trendType === 'positive' ? 'text-emerald-400' : 'text-red-400'}`}>
+            <div className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-background/50 border border-border ${stat.trendType === 'positive' ? 'text-emerald-500' : 'text-red-500'}`}>
               {stat.trendType === 'positive' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
               {stat.trend}
             </div>
           </div>
           
           <div>
-            <h4 className="text-3xl font-bold text-white font-mono tracking-tight">
+            <h4 className="text-3xl font-bold text-card-foreground font-mono tracking-tight">
               <AnimatedCounter value={stat.value} />
             </h4>
-            <p className="text-sm text-slate-400 mt-1 font-medium">{stat.label}</p>
+            <p className="text-sm text-muted-foreground mt-1 font-medium">{stat.label}</p>
           </div>
         </motion.div>
       ))}

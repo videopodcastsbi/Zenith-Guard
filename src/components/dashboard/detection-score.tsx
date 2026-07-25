@@ -84,10 +84,10 @@ export function DetectionScore({ score }: { score: number }) {
       </svg>
       
       <div className="absolute flex flex-col items-center justify-center">
-        <span className="text-4xl font-bold text-white tracking-tighter">
+        <span className="text-4xl font-bold text-foreground tracking-tighter">
           {animatedScore}
         </span>
-        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider mt-1">
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider mt-1">
           / 100
         </span>
       </div>

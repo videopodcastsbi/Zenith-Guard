@@ -70,10 +70,10 @@ export function Sidebar() {
     <motion.aside
       initial={false}
       animate={{ width: collapsed ? 80 : 280 }}
-      className="relative flex flex-col h-full bg-[#111118]/80 backdrop-blur-xl border-r border-white/5 z-20 hidden md:flex"
+      className="relative flex flex-col h-full bg-sidebar/80 backdrop-blur-xl border-r border-border z-20 hidden md:flex"
     >
       <div className="flex items-center p-6 h-20">
-        <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 font-bold text-xl">
+        <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap text-foreground font-bold text-xl">
           <Shield className="w-8 h-8 text-blue-500 shrink-0" />
           <AnimatePresence>
             {!collapsed && (
@@ -92,7 +92,7 @@ export function Sidebar() {
 
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-7 bg-slate-800 border border-white/10 rounded-full p-1 text-slate-400 hover:text-white transition-colors"
+        className="absolute -right-3 top-7 bg-card border border-border rounded-full p-1 text-muted-foreground hover:text-foreground transition-colors"
       >
         {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
@@ -102,7 +102,7 @@ export function Sidebar() {
           {NAV_ITEMS.map((section, idx) => (
             <div key={idx} className="mb-6">
               {!collapsed && (
-                <div className="px-3 mb-2 text-xs font-semibold text-slate-500 tracking-wider">
+                <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground tracking-wider">
                   {section.section}
                 </div>
               )}
@@ -118,8 +118,8 @@ export function Sidebar() {
                             className={cn(
                               "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative",
                               isActive
-                                ? "bg-blue-500/10 text-blue-400"
-                                : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                                ? "bg-primary/10 text-primary"
+                                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                             )}
                           />
                         }
@@ -127,7 +127,7 @@ export function Sidebar() {
                           {isActive && (
                             <motion.div
                               layoutId="activeNavIndicator"
-                              className="absolute left-0 w-1 h-full bg-blue-500 rounded-r-full"
+                              className="absolute left-0 w-1 h-full bg-primary rounded-r-full"
                               initial={false}
                               transition={{ type: "spring", stiffness: 300, damping: 30 }}
                             />
@@ -136,7 +136,7 @@ export function Sidebar() {
                             size={20}
                             className={cn(
                               "shrink-0 transition-colors",
-                              isActive ? "text-blue-400" : "group-hover:text-slate-200"
+                              isActive ? "text-primary" : "group-hover:text-foreground"
                             )}
                           />
                           <AnimatePresence>
@@ -153,7 +153,7 @@ export function Sidebar() {
                           </AnimatePresence>
                       </TooltipTrigger>
                       {collapsed && (
-                        <TooltipContent side="right" className="bg-[#1a1a24] border-white/10 text-slate-200">
+                        <TooltipContent side="right" className="bg-popover border-border text-popover-foreground">
                           {item.name}
                         </TooltipContent>
                       )}
@@ -166,16 +166,16 @@ export function Sidebar() {
         </TooltipProvider>
       </ScrollArea>
 
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-border">
         <div className={cn("flex items-center gap-3", collapsed ? "justify-center" : "")}>
-          <Avatar className="h-10 w-10 border border-white/10">
+          <Avatar className="h-10 w-10 border border-border">
             <AvatarImage src="" />
-            <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">ZG</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary font-bold">ZG</AvatarFallback>
           </Avatar>
           {!collapsed && (
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-slate-200 truncate">Developer</span>
-              <span className="text-xs text-blue-400 truncate">Pro Tier</span>
+              <span className="text-sm font-medium text-foreground truncate">Developer</span>
+              <span className="text-xs text-primary truncate">Pro Tier</span>
             </div>
           )}
         </div>

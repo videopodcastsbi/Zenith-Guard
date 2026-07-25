@@ -34,6 +34,7 @@ export async function getAlerts() {
     title: `${event.event_type} Detected`,
     severity: capitalizeFirstLetter(event.severity),
     player: event.player_name || event.player_id,
+    userId: event.player_id,
     game: event.games?.name || 'Unknown',
     time: formatTimeAgo(new Date(event.created_at)),
     description: event.description

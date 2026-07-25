@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { AlertCircle, ShieldAlert, Crosshair, MessageSquareWarning, Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { getAlerts } from "@/app/(dashboard)/alerts/actions";
 
@@ -10,6 +11,7 @@ type FeedItem = {
   id: string;
   severity: "low" | "medium" | "high" | "critical";
   player: string;
+  userId?: string;
   type: string;
   game: string;
   time: string;
@@ -40,6 +42,7 @@ export function LiveFeed() {
         id: a.id,
         severity: (a.severity.toLowerCase() as any) || "medium",
         player: a.player, // This uses player_name from the DB which is their real Roblox username
+        userId: a.userId,
         type: a.title.replace(' Detected', ''),
         game: a.game,
         time: a.time
@@ -63,16 +66,16 @@ export function LiveFeed() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
         </span>
-        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Live</span>
+        <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Live</span>
       </div>
       
       <div className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-3 mt-2">
         {loading ? (
           <div className="flex h-full items-center justify-center">
-             <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         ) : events.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center text-slate-500">
+          <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
              <p>No recent events</p>
              <p className="text-xs mt-1">Waiting for data from your games...</p>
           </div>
@@ -87,21 +90,32 @@ export function LiveFeed() {
                   animate={{ opacity: 1, y: 0, height: "auto" }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-black/20 border border-white/5 rounded-lg p-3 flex gap-3 items-start group hover:bg-white/5 transition-colors"
+                  className="bg-background/50 border border-border rounded-lg p-3 flex gap-3 items-start group hover:bg-muted/50 transition-colors"
                 >
-                  <div className={cn("p-2 rounded-md border shrink-0", SEVERITY_COLORS[event.severity] || SEVERITY_COLORS.medium)}>
-                    <Icon className="w-4 h-4" />
+                  <div className="shrink-0">
+                    {event.userId ? (
+                      <Avatar className="h-9 w-9 border border-border">
+                        <AvatarImage src={`https://www.roblox.com/headshot-thumbnail/image?userId=${event.userId}&width=150&height=150&format=png`} alt={event.player} />
+                        <AvatarFallback className={cn("bg-background/50", SEVERITY_COLORS[event.severity] || SEVERITY_COLORS.medium)}>
+                          <Icon className="w-4 h-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <div className={cn("p-2 rounded-md border shrink-0 bg-background/50", SEVERITY_COLORS[event.severity] || SEVERITY_COLORS.medium)}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-medium text-slate-200 truncate">
+                      <p className="text-sm font-medium text-foreground truncate">
                         {event.player}
                       </p>
-                      <span className="text-xs text-slate-500 whitespace-nowrap">{event.time}</span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{event.time}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
-                      <span className="font-semibold text-slate-300">{event.type}</span>
-                      <span className="w-1 h-1 rounded-full bg-slate-600" />
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
+                      <span className="font-semibold text-foreground">{event.type}</span>
+                      <span className="w-1 h-1 rounded-full bg-muted-foreground" />
                       <span className="truncate">{event.game}</span>
                     </p>
                   </div>
@@ -112,8 +126,8 @@ export function LiveFeed() {
         )}
       </div>
       
-      <div className="pt-4 mt-auto border-t border-white/5 text-center">
-        <a href="/alerts" className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors">
+      <div className="pt-4 mt-auto border-t border-border text-center">
+        <a href="/alerts" className="text-xs text-primary hover:text-primary/80 font-medium transition-colors">
           View All Events
         </a>
       </div>

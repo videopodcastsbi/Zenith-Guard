@@ -23,28 +23,28 @@ export default function PlayersPage() {
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold text-foreground">
           Players Overview
         </h1>
-        <Button variant="outline" className="border-gray-800 bg-[#111118]">
+        <Button variant="outline" className="border-border bg-background">
           <Filter className="mr-2 h-4 w-4" /> Filter
         </Button>
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
           placeholder="Search by username or ID..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-[#111118] border-gray-800 h-12 text-lg"
+          className="pl-10 bg-card border-border h-12 text-lg text-foreground placeholder:text-muted-foreground"
         />
       </div>
 
-      <div className="rounded-md border border-gray-800 bg-[#111118]/50 backdrop-blur overflow-hidden">
+      <div className="rounded-md border border-border bg-card/50 backdrop-blur overflow-hidden">
         <Table>
-          <TableHeader className="bg-black/20">
-            <TableRow className="border-gray-800 hover:bg-transparent">
+          <TableHeader className="bg-background/50">
+            <TableRow className="border-border hover:bg-transparent">
               <TableHead>Player</TableHead>
               <TableHead>User ID</TableHead>
               <TableHead>Risk Score</TableHead>
@@ -57,51 +57,51 @@ export default function PlayersPage() {
             {filteredPlayers.map((player, index) => (
               <TableRow 
                 key={player.id} 
-                className="border-gray-800 hover:bg-gray-800/30 transition-colors cursor-pointer"
+                className="border-border hover:bg-muted/50 transition-colors cursor-pointer"
               >
                 <TableCell>
                   <Link href={`/players/${player.id}`} className="flex items-center space-x-3">
-                    <Avatar className="h-9 w-9 border border-gray-700">
+                    <Avatar className="h-9 w-9 border border-border">
                       <AvatarImage src={`https://www.roblox.com/headshot-thumbnail/image?userId=${player.userId}&width=150&height=150&format=png`} alt={player.username} />
-                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                         {player.username.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-medium text-gray-200">{player.username}</span>
+                    <span className="font-medium text-foreground">{player.username}</span>
                   </Link>
                 </TableCell>
-                <TableCell className="text-gray-400 font-mono">{player.userId}</TableCell>
+                <TableCell className="text-muted-foreground font-mono">{player.userId}</TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-2">
-                    <div className="w-16 h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="w-16 h-2 bg-muted rounded-full overflow-hidden border border-border">
                       <div 
                         className={cn(
                           "h-full rounded-full",
-                          player.riskScore < 30 ? "bg-green-500" : player.riskScore < 70 ? "bg-yellow-500" : "bg-red-500"
+                          player.riskScore < 30 ? "bg-emerald-500" : player.riskScore < 70 ? "bg-yellow-500" : "bg-destructive"
                         )}
                         style={{ width: `${player.riskScore}%` }}
                       />
                     </div>
-                    <span className="text-sm text-gray-400">{player.riskScore}</span>
+                    <span className="text-sm text-muted-foreground">{player.riskScore}</span>
                   </div>
                 </TableCell>
                 <TableCell>
                   {player.alerts > 0 ? (
-                    <span className="flex items-center text-red-400">
+                    <span className="flex items-center text-destructive">
                       <ShieldAlert className="mr-1 h-4 w-4" /> {player.alerts}
                     </span>
                   ) : (
-                    <span className="text-gray-500">0</span>
+                    <span className="text-muted-foreground">0</span>
                   )}
                 </TableCell>
-                <TableCell className="text-gray-400">{player.lastSeen}</TableCell>
+                <TableCell className="text-muted-foreground">{player.lastSeen}</TableCell>
                 <TableCell>
                   <Badge 
                     variant="outline" 
                     className={cn(
-                      player.status === 'Online' ? "border-green-500/30 text-green-400" : 
-                      player.status === 'Flagged' ? "border-red-500/30 text-red-400" : 
-                      "border-gray-700 text-gray-500"
+                      player.status === 'Online' ? "border-emerald-500/30 text-emerald-500" : 
+                      player.status === 'Flagged' ? "border-destructive/30 text-destructive" : 
+                      "border-border text-muted-foreground"
                     )}
                   >
                     {player.status}

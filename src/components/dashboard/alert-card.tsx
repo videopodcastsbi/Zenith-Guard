@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { AlertTriangle, ShieldAlert, Crosshair, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface AlertProps {
@@ -11,6 +12,7 @@ interface AlertProps {
     type: string;
     severity: "critical" | "high" | "medium" | "low";
     player: string;
+    userId?: string;
     game: string;
     timestamp: string;
     description: string;
@@ -33,39 +35,50 @@ export function AlertCard({ alert }: AlertProps) {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       className={cn(
-        "bg-[#111118]/80 border border-white/5 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-4 group hover:bg-white/5 transition-colors border-l-4",
+        "bg-card/80 border border-border p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-4 group hover:bg-muted/50 transition-colors border-l-4",
         config.border
       )}
     >
-      <div className={cn("p-2 rounded-lg bg-black/40 shrink-0 self-start sm:self-center", config.text)}>
-        <Icon className="w-5 h-5" />
+      <div className="shrink-0 self-start sm:self-center">
+        {alert.userId ? (
+          <Avatar className="h-12 w-12 border border-border">
+            <AvatarImage src={`https://www.roblox.com/headshot-thumbnail/image?userId=${alert.userId}&width=150&height=150&format=png`} alt={alert.player} />
+            <AvatarFallback className="bg-background/50 text-foreground">
+              <Icon className={cn("w-5 h-5", config.text)} />
+            </AvatarFallback>
+          </Avatar>
+        ) : (
+          <div className={cn("p-3 rounded-full bg-background/50", config.text)}>
+            <Icon className="w-5 h-5" />
+          </div>
+        )}
       </div>
       
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2 mb-1">
-          <h4 className="text-sm font-semibold text-slate-200 truncate">
+          <h4 className="text-sm font-semibold text-foreground truncate">
             {alert.type} Detected
           </h4>
-          <span className="text-xs text-slate-500 whitespace-nowrap">{alert.timestamp}</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">{alert.timestamp}</span>
         </div>
-        <p className="text-sm text-slate-400 mb-2 truncate">{alert.description}</p>
+        <p className="text-sm text-muted-foreground mb-2 truncate">{alert.description}</p>
         <div className="flex flex-wrap items-center gap-3 text-xs">
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-            <span className="font-medium text-slate-200">{alert.player}</span>
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />
+            <span className="font-medium text-foreground">{alert.player}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />
             {alert.game}
           </div>
-          <div className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/30", config.text)}>
+          <div className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-background/50", config.text)}>
             {alert.severity}
           </div>
         </div>
       </div>
 
       <div className="shrink-0 mt-3 sm:mt-0">
-        <Button variant="outline" size="sm" className="w-full sm:w-auto border-white/10 text-slate-300 hover:text-white hover:bg-white/10">
+        <Button variant="outline" size="sm" className="w-full sm:w-auto border-border text-muted-foreground hover:text-foreground hover:bg-muted/50">
           Details
         </Button>
       </div>

@@ -50,6 +50,8 @@ const NAV_ITEMS = [
   }
 ];
 
+import { ThemeToggle } from "@/components/theme-toggle";
+
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -81,22 +83,22 @@ export function Header() {
   const title = currentPath.charAt(0).toUpperCase() + currentPath.slice(1);
 
   return (
-    <header className="h-20 border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-md flex items-center justify-between px-4 md:px-6 sticky top-0 z-10">
+    <header className="h-20 border-b border-border bg-background/80 backdrop-blur-md flex items-center justify-between px-4 md:px-6 sticky top-0 z-10">
       <div className="flex items-center gap-4">
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden text-slate-400 hover:text-white" />}>
+          <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden text-muted-foreground hover:text-foreground" />}>
               <Menu size={20} />
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-72 bg-[#111118] border-r-white/10 overflow-y-auto">
+          <SheetContent side="left" className="p-0 w-72 bg-sidebar border-r-border overflow-y-auto">
             <div className="h-full w-full block md:hidden">
-               <div className="p-6 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 flex items-center gap-2">
+               <div className="p-6 text-xl font-bold text-foreground flex items-center gap-2">
                  <Shield className="w-8 h-8 text-blue-500 shrink-0" />
                  Zenith-Guard
                </div>
                <div className="px-3 pb-6">
                  {NAV_ITEMS.map((section, idx) => (
                    <div key={idx} className="mb-6">
-                     <div className="px-3 mb-2 text-xs font-semibold text-slate-500 tracking-wider">
+                     <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground tracking-wider">
                        {section.section}
                      </div>
                      <div className="space-y-1">
@@ -109,11 +111,11 @@ export function Header() {
                              onClick={() => setMobileMenuOpen(false)}
                              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
                                isActive
-                                 ? "bg-blue-500/10 text-blue-400"
-                                 : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                                 ? "bg-primary/10 text-primary"
+                                 : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                              }`}
                            >
-                             <item.icon size={20} className={isActive ? "text-blue-400" : "text-slate-400"} />
+                             <item.icon size={20} className={isActive ? "text-primary" : "text-muted-foreground"} />
                              <span>{item.name}</span>
                            </Link>
                          );
@@ -127,28 +129,28 @@ export function Header() {
         </Sheet>
         
         <div className="hidden md:flex flex-col">
-          <span className="text-xs text-slate-500 font-medium">Pages / {title}</span>
-          <h1 className="text-xl font-bold text-slate-100">{title}</h1>
+          <span className="text-xs text-muted-foreground font-medium">Pages / {title}</span>
+          <h1 className="text-xl font-bold text-foreground">{title}</h1>
         </div>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="relative hidden md:flex items-center" onClick={() => setSearchOpen(true)}>
-          <Search className="absolute left-3 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
           <input 
             type="text" 
             readOnly
             placeholder="Search..." 
-            className="pl-9 pr-4 py-2 bg-[#1a1a24] border border-white/5 rounded-full text-sm text-slate-200 placeholder:text-slate-500 hover:border-white/20 cursor-pointer focus:outline-none w-64 transition-all"
+            className="pl-9 pr-4 py-2 bg-muted/50 border border-border rounded-full text-sm text-foreground placeholder:text-muted-foreground hover:border-primary/50 cursor-pointer focus:outline-none w-64 transition-all"
           />
           <div className="absolute right-3 flex items-center gap-1">
-            <span className="text-[10px] font-medium text-slate-500 border border-white/10 rounded px-1.5 py-0.5 bg-black/20">⌘K</span>
+            <span className="text-[10px] font-medium text-muted-foreground border border-border rounded px-1.5 py-0.5 bg-background">⌘K</span>
           </div>
         </div>
 
         <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-          <DialogContent className="bg-[#111118] border-white/10 sm:max-w-[425px] p-0 overflow-hidden">
-            <div className="flex items-center border-b border-white/10 px-3">
+          <DialogContent className="bg-background border-border sm:max-w-[425px] p-0 overflow-hidden">
+            <div className="flex items-center border-b border-border px-3">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <input 
                 autoFocus
@@ -156,23 +158,25 @@ export function Header() {
                 placeholder="Type a command or search..."
               />
             </div>
-            <div className="p-4 text-center text-sm text-slate-500">
+            <div className="p-4 text-center text-sm text-muted-foreground">
               No recent searches.
             </div>
           </DialogContent>
         </Dialog>
 
+        <ThemeToggle />
+
         <DropdownMenu open={notifOpen} onOpenChange={setNotifOpen}>
-          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="relative text-slate-400 hover:text-white rounded-full" />}>
+          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground rounded-full" />}>
             <Bell size={20} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0a0a0f]"></span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-80 bg-[#1a1a24] border-white/10 text-slate-200 p-0" align="end">
-            <div className="p-4 border-b border-white/10 flex justify-between items-center">
-              <span className="font-semibold text-white">Notifications</span>
-              <span className="text-xs text-blue-400 cursor-pointer">Mark all read</span>
+          <DropdownMenuContent className="w-80 bg-popover border-border text-popover-foreground p-0" align="end">
+            <div className="p-4 border-b border-border flex justify-between items-center">
+              <span className="font-semibold">Notifications</span>
+              <span className="text-xs text-primary cursor-pointer">Mark all read</span>
             </div>
-            <div className="p-4 text-center text-sm text-slate-500 h-32 flex items-center justify-center">
+            <div className="p-4 text-center text-sm text-muted-foreground h-32 flex items-center justify-center">
               No new notifications
             </div>
           </DropdownMenuContent>
@@ -180,31 +184,31 @@ export function Header() {
 
         <DropdownMenu>
           <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-10 w-10 rounded-full" />}>
-              <Avatar className="h-10 w-10 border border-white/10">
+              <Avatar className="h-10 w-10 border border-border">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-gradient-to-br from-blue-600 to-cyan-400 text-white font-semibold">ZG</AvatarFallback>
+                <AvatarFallback className="bg-primary/10 text-primary font-semibold">ZG</AvatarFallback>
               </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-[#1a1a24] border-white/10 text-slate-200" align="end">
+          <DropdownMenuContent className="w-56 bg-popover border-border text-popover-foreground" align="end">
             <DropdownMenuGroup>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none text-white">Developer</p>
-                  <p className="text-xs leading-none text-slate-400">dev@zenith-guard.com</p>
+                  <p className="text-sm font-medium leading-none">Developer</p>
+                  <p className="text-xs leading-none text-muted-foreground">dev@zenith-guard.com</p>
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator className="bg-white/10" />
-            <DropdownMenuItem className="focus:bg-white/5 focus:text-white cursor-pointer" onClick={() => router.push('/settings')}>
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuItem className="focus:bg-muted focus:text-foreground cursor-pointer" onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="focus:bg-white/5 focus:text-white cursor-pointer" onClick={() => router.push('/billing')}>
+            <DropdownMenuItem className="focus:bg-muted focus:text-foreground cursor-pointer" onClick={() => router.push('/billing')}>
               <CreditCard className="mr-2 h-4 w-4" />
               <span>Billing</span>
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/10" />
-            <DropdownMenuItem onClick={handleLogout} className="focus:bg-red-500/20 focus:text-red-400 text-red-400 cursor-pointer">
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuItem onClick={handleLogout} className="focus:bg-red-500/20 focus:text-red-500 text-red-500 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>
