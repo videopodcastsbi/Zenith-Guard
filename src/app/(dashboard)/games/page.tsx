@@ -33,13 +33,18 @@ export default function GamesPage() {
     setLoading(false);
   };
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const handleAddGame = (formData: FormData) => {
+    setErrorMsg(null);
     startTransition(async () => {
       const res = await addGame(formData);
       if (res?.success) {
         setOpen(false);
         formRef.current?.reset();
         await fetchGames();
+      } else if (res?.error) {
+        setErrorMsg(res.error);
       }
     });
   };
@@ -65,6 +70,11 @@ export default function GamesPage() {
               <DialogTitle>Add Protected Game</DialogTitle>
             </DialogHeader>
             <form action={handleAddGame} ref={formRef} className="space-y-4 py-4">
+              {errorMsg && (
+                <div className="p-3 text-sm bg-red-500/10 border border-red-500/20 text-red-400 rounded-md">
+                  {errorMsg}
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Game Name</label>
                 <Input name="name" required placeholder="e.g. My Awesome Game" className="bg-[#1a1a24] border-gray-800" />
