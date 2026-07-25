@@ -94,6 +94,24 @@ export async function addGame(formData: FormData) {
     name: user.user_metadata?.full_name || user.user_metadata?.name || 'User'
   }, { onConflict: 'id' })
 
+  // Check subscription limits
+  const { data: userData } = await supabaseAdmin
+    .from('users')
+    .select('subscription_tier')
+    .eq('id', user.id)
+    .single()
+
+  if (userData?.subscription_tier === 'free') {
+    const { count } = await supabaseAdmin
+      .from('games')
+      .select('*', { count: 'exact', head: true })
+      .eq('owner_id', user.id)
+    
+    if (count !== null && count >= 2) {
+      return { error: 'Free tier limit reached (Max 2 games). Please upgrade to Pro.' }
+    }
+  }
+
   const { error } = await supabase
     .from('games')
     .insert({
