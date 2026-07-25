@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { mockPlayers } from "@/data/mock";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -62,6 +62,7 @@ export default function PlayersPage() {
                 <TableCell>
                   <Link href={`/players/${player.id}`} className="flex items-center space-x-3">
                     <Avatar className="h-9 w-9 border border-gray-700">
+                      <AvatarImage src={`https://www.roblox.com/headshot-thumbnail/image?userId=${player.userId}&width=150&height=150&format=png`} alt={player.username} />
                       <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                         {player.username.charAt(0)}
                       </AvatarFallback>
