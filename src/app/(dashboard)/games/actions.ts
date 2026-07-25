@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 export async function getGames() {
   const supabase = await createClient()
@@ -81,8 +82,13 @@ export async function addGame(formData: FormData) {
   }
 
   // Ensure user exists in public.users to prevent foreign key constraint errors
-  // This is a fallback in case the Supabase trigger failed
-  await supabase.from('users').upsert({
+  // We use the service_role key to bypass RLS because public.users has no INSERT policy
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+  
+  await supabaseAdmin.from('users').upsert({
     id: user.id,
     email: user.email || 'unknown@example.com',
     name: user.user_metadata?.full_name || user.user_metadata?.name || 'User'
