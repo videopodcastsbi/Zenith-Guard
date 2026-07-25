@@ -27,15 +27,21 @@ export async function getGames() {
     let playing = 0;
     
     try {
-      // 1. Get Universe ID
-      const uniRes = await fetch(`https://apis.roblox.com/universes/v1/places/${game.place_id}/universe`, { next: { revalidate: 30 } });
+      // 1. Get Universe ID (with 3s timeout to prevent hanging)
+      const uniRes = await fetch(`https://apis.roblox.com/universes/v1/places/${game.place_id}/universe`, { 
+        next: { revalidate: 30 },
+        signal: AbortSignal.timeout(3000)
+      });
       if (uniRes.ok) {
         const uniData = await uniRes.json();
         const universeId = uniData.universeId;
         
         if (universeId) {
-          // 2. Get Game Stats
-          const statsRes = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`, { next: { revalidate: 30 } });
+          // 2. Get Game Stats (with 3s timeout)
+          const statsRes = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`, { 
+            next: { revalidate: 30 },
+            signal: AbortSignal.timeout(3000)
+          });
           if (statsRes.ok) {
             const statsData = await statsRes.json();
             if (statsData.data && statsData.data.length > 0) {

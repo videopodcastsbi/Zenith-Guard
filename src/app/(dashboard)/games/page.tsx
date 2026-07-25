@@ -42,7 +42,8 @@ export default function GamesPage() {
       if (res?.success) {
         setOpen(false);
         formRef.current?.reset();
-        await fetchGames();
+        // Fetch games in background without awaiting, so dialog closes instantly
+        fetchGames();
       } else if (res?.error) {
         setErrorMsg(res.error);
       }
