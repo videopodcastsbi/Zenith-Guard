@@ -77,25 +77,33 @@ export async function POST(req: NextRequest) {
       .eq('key_hash', apiKey);
 
     // 7. Fire Discord Webhook if user is PRO and has a webhook configured
-    if (subscriptionTier === 'pro' && discordWebhookUrl) {
+    if ((subscriptionTier === 'pro' || subscriptionTier === 'enterprise') && discordWebhookUrl) {
       try {
+        const severityEmoji = payload.severity === 'critical' ? '🔴' : payload.severity === 'high' ? '🟠' : payload.severity === 'medium' ? '🟡' : '🔵';
         const embed = {
-          title: `⚠️ Zenith-Guard Alert: ${payload.type}`,
-          color: payload.severity === 'critical' ? 16711680 : payload.severity === 'high' ? 16734003 : 16753920,
+          title: `${severityEmoji} Zenith-Guard Alert: ${payload.type}`,
+          color: payload.severity === 'critical' ? 16711680 : payload.severity === 'high' ? 16734003 : payload.severity === 'medium' ? 16753920 : 3447003,
+          thumbnail: {
+            url: `https://www.roblox.com/headshot-thumbnail/image?userId=${payload.playerId}&width=150&height=150&format=png`
+          },
           fields: [
-            { name: 'Player ID', value: payload.playerId.toString(), inline: true },
-            { name: 'Player Name', value: payload.playerName || 'Unknown', inline: true },
-            { name: 'Severity', value: payload.severity || 'medium', inline: true },
-            { name: 'Description', value: payload.description || 'No description provided', inline: false }
+            { name: '👤 Player', value: payload.playerName || 'Unknown', inline: true },
+            { name: '🆔 User ID', value: payload.playerId.toString(), inline: true },
+            { name: '⚠️ Severity', value: (payload.severity || 'medium').toUpperCase(), inline: true },
+            { name: '📝 Description', value: payload.description || 'No description provided', inline: false }
           ],
-          footer: { text: 'Zenith-Guard Anti-Cheat System' },
+          footer: { text: '🛡️ Zenith-Guard Anti-Cheat System', icon_url: 'https://zenith-guard-nine.vercel.app/favicon.ico' },
           timestamp: new Date().toISOString()
         };
 
         await fetch(discordWebhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ embeds: [embed] })
+          body: JSON.stringify({
+            username: 'Zenith-Guard',
+            avatar_url: 'https://zenith-guard-nine.vercel.app/favicon.ico',
+            embeds: [embed]
+          })
         });
       } catch (webhookError) {
         console.error('Failed to fire Discord webhook:', webhookError);

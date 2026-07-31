@@ -14,6 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://zenith-guard-nine.vercel.app'),
   title: {
     default: "Zenith-Guard | Premium Roblox Security & Anti-Cheat",
     template: "%s | Zenith-Guard"

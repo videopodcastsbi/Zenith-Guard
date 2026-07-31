@@ -44,13 +44,13 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="py-24 relative z-10 bg-[#0a0a0f]">
+    <section id="features" className="py-24 relative z-10 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
             Everything you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">secure your game</span>
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p className="text-muted-foreground text-lg">
             Powerful tools designed specifically for Roblox developers to monitor, detect, and respond to threats in real-time.
           </p>
         </div>
@@ -66,12 +66,12 @@ export default function Features() {
               className="group relative p-[1px] rounded-2xl bg-gradient-to-b from-white/10 to-transparent hover:from-white/20 transition-all duration-300"
             >
               <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-2xl z-0" />
-              <div className="relative h-full bg-[#111118]/90 backdrop-blur-sm rounded-2xl p-8 z-10 flex flex-col">
+              <div className="relative h-full bg-card/90 backdrop-blur-sm rounded-2xl p-8 z-10 flex flex-col">
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg`}>
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors">{feature.title}</h3>
-                <p className="text-gray-400 leading-relaxed flex-grow">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed flex-grow">{feature.description}</p>
               </div>
             </motion.div>
           ))}
