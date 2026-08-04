@@ -168,23 +168,30 @@ export default function ApiKeysPage() {
               <pre className="text-sm font-mono text-muted-foreground">
                 <code className="language-lua">
 {`local HttpService = game:GetService("HttpService")
-local API_URL = "https://api.zenith-guard.com/v1"
+local API_URL = "https://zenith-guard-nine.vercel.app/api/v1/events"
 local API_KEY = "YOUR_API_KEY_HERE"
 
-local function reportEvent(player, eventType, data)
+local function reportEvent(player, eventType, severity, description, data)
     local payload = HttpService:JSONEncode({
-        playerId = player.UserId,
+        playerId = tostring(player.UserId),
+        playerName = player.Name,
         type = eventType,
-        data = data
+        severity = severity or "medium",
+        description = description or "",
+        data = data or {}
     })
     
-    HttpService:PostAsync(
-        API_URL .. "/events",
-        payload,
-        Enum.HttpContentType.ApplicationJson,
-        false,
-        { ["Authorization"] = "Bearer " .. API_KEY }
-    )
+    task.spawn(function()
+        pcall(function()
+            HttpService:PostAsync(
+                API_URL,
+                payload,
+                Enum.HttpContentType.ApplicationJson,
+                false,
+                { ["Authorization"] = "Bearer " .. API_KEY }
+            )
+        end)
+    end)
 end`}
                 </code>
               </pre>
